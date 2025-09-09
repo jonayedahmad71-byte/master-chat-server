@@ -170,6 +170,8 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             z-index: 10;
             transition: background-color 0.3s, color 0.3s;
+            position: sticky;
+            top: 0;
         }
 
         .menu-icon, .new-chat-icon {
@@ -231,12 +233,18 @@
         }
 
         .message-content {
-            max-width: 70%;
+            max-width: 100%;
             padding: 12px 16px;
             border-radius: 18px;
             position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .bot-message .message-content {
+            background-color: transparent !important;
+            border: none;
+            box-shadow: none;
+            padding: 0;
         }
 
         .user-message .message-content {
@@ -244,6 +252,7 @@
             color: #333;
             border: 1px solid #e9e9eb;
             border-top-right-radius: 4px;
+            max-width: 50%; /* ✅ ৫. ইউজার মেসেজ ৫০% */
         }
 
         .message-text {
@@ -531,144 +540,69 @@
             background-color: rgba(110, 142, 251, 0.1);
         }
 
-        /* Dark Mode Styles */
-        body.dark-mode {
-            background-color: #121212;
-            color: #e0e0e0;
-        }
-
-        .dark-mode .sidebar {
-            background-color: #1e1e1e;
-            color: #e0e0e0;
-        }
-
-        .dark-mode .sidebar-header {
-            background: linear-gradient(135deg, #4a69bd, #6a1b9a);
-        }
-
-        .dark-mode .sidebar-menu li {
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .dark-mode .sidebar-menu li:hover {
-            background-color: rgba(74, 105, 189, 0.2);
-        }
-
-        .dark-mode .chat-history-section {
-            background-color: #2d2d2d;
-            border-top: 1px solid #3a3a3a;
-        }
-
-        .dark-mode .chat-history-item {
-            border-bottom: 1px solid #3a3a3a;
-            color: #ccc;
-        }
-
-        .dark-mode .chat-history-item:hover {
-            background-color: rgba(74, 105, 189, 0.2);
-        }
-
-        .dark-mode .sidebar-footer {
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .dark-mode .sidebar-footer li:hover {
-            background-color: rgba(74, 105, 189, 0.2);
-        }
-
-        .dark-mode .chat-main {
-            background-color: #1e1e1e;
-        }
-
-        .dark-mode .chat-messages {
-            background-color: #1e1e1e;
-        }
-
-        .dark-mode .chat-header {
-            background-color: #2d2d2d;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            color: #ffffff;
-        }
-
-        .dark-mode .chat-title {
-            color: #ffffff;
-        }
-
-        .dark-mode .menu-icon,
-        .dark-mode .new-chat-icon,
-        .dark-mode .voice-btn,
-        .dark-mode .media-share-btn {
-            color: #a777e3;
-        }
-
-        .dark-mode .menu-icon:hover,
-        .dark-mode .new-chat-icon:hover,
-        .dark-mode .voice-btn:hover,
-        .dark-mode .media-share-btn:hover {
-            background-color: rgba(167, 119, 227, 0.2);
-        }
-
-        .dark-mode .message-content {
-            background-color: #2d2d2d;
-            color: #ffffff;
-            border-color: #3a3a3a;
-        }
-
-        .dark-mode .user-message .message-content {
-            border-color: #4a4a4a;
-        }
-
-        .dark-mode .input-container input {
-            background-color: #2d2d2d;
-            color: #ffffff;
-            border-color: #4a4a4a;
-        }
-
-        .dark-mode .input-container input:focus {
-            border-color: #a777e3;
-        }
-
-        .dark-mode .chat-input {
-            background-color: #2d2d2d;
-            border-color: #3a3a3a;
-        }
-
-        .dark-mode .typing-indicator {
-            background-color: #2d2d2d;
-            border-color: #3a3a3a;
-        }
-
-        .dark-mode .notification {
-            background-color: #2e7d32;
-        }
-
-        .dark-mode .media-content {
-            background-color: #2d2d2d;
-            color: #ffffff;
-        }
-
-        .dark-mode .media-option:hover {
-            background-color: rgba(167, 119, 227, 0.2);
-        }
-
-        .dark-mode .close-media {
-            color: #a777e3;
-        }
-
-        .image-preview {
-            max-width: 100%;
-            border-radius: 8px;
+        /* Code Block Styling */
+        .code-wrapper {
+            position: relative;
+            width: 100%;
             margin: 10px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .file-name {
-            font-size: 0.9rem;
+        .code-lines {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 40px;
+            background-color: #f5f5f5;
+            color: #999;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            padding: 15px 0;
+            pointer-events: none;
+            user-select: none;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .code-content {
+            margin-left: 40px;
+            background-color: #f8f8f8;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+            color: #e6c07b;
+        }
+
+        .code-content::selection {
+            background: #a67acc;
+            color: white;
+        }
+
+        .copy-code-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
             color: #6e8efb;
-            margin: 5px 0;
-            word-break: break-all;
+            cursor: pointer;
+            font-size: 14px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
         }
 
+        .copy-code-btn:hover {
+            background-color: rgba(110, 142, 251, 0.1);
+        }
+
+        /* Welcome Screen */
         .welcome-screen {
             display: flex;
             flex-direction: column;
@@ -728,102 +662,7 @@
             transform: scale(0.98);
         }
 
-        /* Code Block Styling with Line Numbers & Copy Button */
-        pre {
-            background-color: #f5f5f5;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 10px 0;
-            font-family: 'Courier New', monospace;
-            border-left: 4px solid #6e8efb;
-            position: relative;
-            width: 100%;
-        }
-
-        code {
-            font-family: 'Courier New', monospace;
-            background-color: #f0f0f0;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .code-wrapper {
-            position: relative;
-            width: 100%;
-        }
-
-        .code-lines {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 40px;
-            color: #999;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            padding: 15px 0;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        .code-content {
-            margin-left: 40px;
-            white-space: pre;
-            overflow-x: auto;
-        }
-
-        .copy-code-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            color: #6e8efb;
-            cursor: pointer;
-            font-size: 14px;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
-        }
-
-        .copy-code-btn:hover {
-            background-color: rgba(110, 142, 251, 0.1);
-        }
-
-        /* Scroll buttons for long messages */
-        .scroll-buttons {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 10;
-        }
-
-        .scroll-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: rgba(255,255,255,0.9);
-            color: #6e8efb;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            transition: background-color 0.2s;
-        }
-
-        .scroll-btn:hover {
-            background-color: #e0e0e0;
-        }
-
-        /* Responsive styles */
+        /* Responsive fixes */
         @media (max-width: 768px) {
             .sidebar.open {
                 width: 80%;
@@ -832,21 +671,18 @@
                 height: 100%;
             }
             
-            .message-content {
-                max-width: 85%;
+            .header-actions {
+                flex-shrink: 0;
             }
-        }
-
-        .scrollable-area {
-            position: relative;
-            height: 100%;
-            overflow-y: auto;
+            
+            .menu-icon, .new-chat-icon {
+                flex-shrink: 0;
+            }
         }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar menu -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h2><img src="favicon.png" alt="Logo" style="width:30px;height:30px;margin-right:10px;border-radius:8px;"> Master Chat</h2>
@@ -855,9 +691,7 @@
                 <ul>
                     <li onclick="newChat()"><i class="fas fa-plus"></i> নতুন চ্যাট</li>
                     <li id="historyTrigger" onclick="toggleChatHistory()"><i class="fas fa-history"></i> চ্যাট ইতিহাস</li>
-                    <div class="chat-history-section" id="chatHistorySection">
-                        <!-- Chat history items will be added here dynamically -->
-                    </div>
+                    <div class="chat-history-section" id="chatHistorySection"></div>
                 </ul>
             </div>
             <div class="sidebar-footer">
@@ -868,9 +702,7 @@
             </div>
         </div>
 
-        <!-- Main chat area -->
         <div class="chat-main">
-            <!-- Chat header -->
             <div class="chat-header">
                 <button class="menu-icon" onclick="toggleSidebar()" aria-label="মেনু খুলুন">
                     <i class="fas fa-bars"></i>
@@ -883,18 +715,15 @@
                 </div>
             </div>
 
-            <!-- Chat messages -->
             <div class="chat-messages" id="chatMessages">
-                <!-- Welcome screen -->
                 <div class="welcome-screen" id="welcomeScreen">
-                    <img src="favicon.png" alt="Logo" style="width:120px;height:120px;border-radius:20px;margin-bottom:20px;">
+                    <div class="welcome-logo">MC</div>
                     <h2 class="welcome-title">Master Chat</h2>
                     <p class="welcome-subtitle">আপনার ব্যক্তিগত AI সহকারী<br>যেকোনো প্রশ্নের উত্তর দিতে প্রস্তুত!</p>
                     <button class="welcome-start-btn" onclick="startChat()">চ্যাট শুরু করুন</button>
                 </div>
             </div>
 
-            <!-- Chat input -->
             <div class="chat-input">
                 <button class="media-share-btn" onclick="showMediaOptions()" aria-label="মিডিয়া শেয়ার করুন">
                     <i class="fas fa-paperclip"></i>
@@ -971,10 +800,10 @@
         let sidebar = document.getElementById('sidebar');
         let currentApiKeyIndex = 0;
         let isHistoryOpen = false;
+        let isSending = false;
 
         // DOM loaded
         document.addEventListener('DOMContentLoaded', function() {
-            // loadChatHistory(); // ❌ এটি মুছে ফেলুন বা ডিফাইন করুন
             document.getElementById('userInput').focus();
             setupSwipeGestures();
             
@@ -1007,9 +836,7 @@
             
             chatMain.addEventListener('touchend', function(e) {
                 const diffX = currentX - startX;
-                if (diffX > 50) {
-                    openSidebar();
-                } else if (diffX < -50) {
+                if (diffX < -50) {
                     closeSidebar();
                 }
                 startX = 0;
@@ -1019,10 +846,6 @@
 
         function toggleSidebar() {
             sidebar.classList.toggle('open');
-        }
-
-        function openSidebar() {
-            sidebar.classList.add('open');
         }
 
         function closeSidebar() {
@@ -1051,13 +874,12 @@
             }
             
             chatHistory.forEach((chat, index) => {
-                const date = new Date(chat.date).toLocaleString('bn-BD');
                 const preview = chat.messages.length > 0 ? chat.messages[0].text.substring(0, 30) + '...' : 'কোনো বার্তা নেই';
                 
                 const historyItem = document.createElement('div');
                 historyItem.className = 'chat-history-item';
                 historyItem.innerHTML = `
-                    <div class="chat-title">${date}</div>
+                    <div class="chat-title">চ্যাট ${index + 1}</div>
                     <div class="chat-preview">${preview}</div>
                 `;
                 historyItem.onclick = function() {
@@ -1080,7 +902,14 @@
                 welcomeScreen.style.display = 'none';
             }
             
-            chatMessages.innerHTML = '<div class="typing-indicator" id="typingIndicator"><span></span><span></span><span></span></div>';
+            // ✅ ৬. নতুন চ্যাটে লোগো শো
+            chatMessages.innerHTML = `
+                <div class="welcome-screen" style="display:flex;">
+                    <div class="welcome-logo">MC</div>
+                    <h2 class="welcome-title">Master Chat</h2>
+                    <p class="welcome-subtitle">আপনার ব্যক্তিগত AI সহকারী<br>যেকোনো প্রশ্নের উত্তর দিতে প্রস্তুত!</p>
+                </div>
+            `;
             
             setTimeout(() => {
                 addMessageToChat('নতুন চ্যাট শুরু হয়েছে! 😊 আমি আপনাকে কিভাবে সাহায্য করতে পারি?', 'bot');
@@ -1228,22 +1057,22 @@
 
             if (fileType.startsWith('image/')) {
                 reader.onload = function(e) {
-                    addMessageToChat(`
+                    window.tempImage = `
                         <div class="file-name">🖼️ গ্যালারি থেকে: ${fileName}</div>
                         <img src="${e.target.result}" class="image-preview" alt="Gallery image">
-                    `, 'user');
-                    showNotification('ছবি আপলোড করা হয়েছে');
+                    `;
+                    showNotification('ছবি সিলেক্ট হয়েছে, সেন্ড বাটনে ক্লিক করুন');
                 };
                 reader.readAsDataURL(file);
             } else if (fileType.startsWith('video/')) {
-                addMessageToChat(`
+                window.tempImage = `
                     <div class="file-name">🎥 ভিডিও: ${fileName}</div>
                     <video controls width="100%" style="border-radius: 8px; margin: 10px 0;">
                         <source src="${URL.createObjectURL(file)}" type="${fileType}">
                         আপনার ব্রাউজার ভিডিও সাপোর্ট করে না।
                     </video>
-                `, 'user');
-                showNotification('ভিডিও আপলোড করা হয়েছে');
+                `;
+                showNotification('ভিডিও সিলেক্ট হয়েছে, সেন্ড বাটনে ক্লিক করুন');
             }
             event.target.value = '';
         }
@@ -1253,12 +1082,12 @@
             if (!file) return;
 
             const fileName = file.name;
-            addMessageToChat(`
+            window.tempImage = `
                 <div class="file-name">📄 ডকুমেন্ট: ${fileName}</div>
                 <div>ফাইলটি আপলোড করা হয়েছে (ডাউনলোড করতে রাইট ক্লিক করুন)</div>
                 <a href="${URL.createObjectURL(file)}" download="${fileName}" style="color: #6e8efb; text-decoration: none;">⬇️ ডাউনলোড</a>
-            `, 'user');
-            showNotification('ডকুমেন্ট আপলোড করা হয়েছে');
+            `;
+            showNotification('ডকুমেন্ট সিলেক্ট হয়েছে, সেন্ড বাটনে ক্লিক করুন');
             event.target.value = '';
         }
 
@@ -1280,7 +1109,6 @@
             recognition.onresult = function(event) {
                 const transcript = event.results[0][0].transcript;
                 document.getElementById('userInput').value = transcript;
-                sendMessage();
                 showNotification('ভয়েস ইনপুট সম্পন্ন হয়েছে');
             };
 
@@ -1288,8 +1116,6 @@
                 console.error('Speech recognition error', event.error);
                 showNotification('ভয়েস ইনপুটে ত্রুটি হয়েছে');
             };
-
-            recognition.onend = function() {};
         }
 
         function detectLanguage(text) {
@@ -1302,12 +1128,11 @@
             }
         }
 
-        // ✅ 1. পরিবর্তন: Groq এর জায়গায় সার্ভারে /api/chat কল করুন
         async function getBotResponse(userMessage, language) {
             try {
                 const systemPrompt = language === 'en'
-                    ? `You are Master Chat, a friendly, helpful, and professional AI assistant created by Kafi AI Developer (Jonayed Al Kafi). You can answer any question, explain concepts, write code, and help with learning. Always respond in a conversational, human-like manner with appropriate emojis. Format code blocks properly. Ask follow-up questions. Be warm, engaging, and remember previous messages in this chat.` 
-                    : `আপনি Master Chat, একজন বন্ধুত্বপূর্ণ, সহায়ক, এবং পেশাদার AI সহকারী, যার নির্মাতা Kafi AI Developer (Jonayed Al Kafi)। আপনি যেকোনো প্রশ্নের উত্তর দিতে পারেন, ধারণা ব্যাখ্যা করতে পারেন, কোড লিখতে পারেন, এবং শেখার কাজে সাহায্য করতে পারেন। সবসময় কথোপকথনের ধরনে, মানুষের মতো উত্তর দিন এবং উপযুক্ত ইমোজি ব্যবহার করুন। কোড ব্লক গুলো সুন্দরভাবে ফরম্যাট করুন। বিষয়ের সাথে সম্পর্কিত প্রশ্ন জিজ্ঞাসা করুন। আন্তরিক, আকর্ষক হোন, এবং এই চ্যাটের আগের বার্তাগুলো মনে রাখুন।`;
+                    ? `You are Master Chat, a friendly, helpful, and professional AI assistant created by Kafi AI Developer (Jonayed Al Kafi). You can answer any question, explain concepts, write code, and help with learning. Always respond in a conversational, human-like manner with appropriate emojis. When writing code, output it line by line with proper syntax highlighting. Format code blocks properly. Ask follow-up questions. Be warm, engaging, and remember previous messages in this chat.` 
+                    : `আপনি Master Chat, একজন বন্ধুত্বপূর্ণ, সহায়ক, এবং পেশাদার AI সহকারী, যার নির্মাতা Kafi AI Developer (Jonayed Al Kafi)। আপনি যেকোনো প্রশ্নের উত্তর দিতে পারেন, ধারণা ব্যাখ্যা করতে পারেন, কোড লিখতে পারেন, এবং শেখার কাজে সাহায্য করতে পারেন। সবসময় কথোপকথনের ধরনে, মানুষের মতো উত্তর দিন এবং উপযুক্ত ইমোজি ব্যবহার করুন। কোড লিখার সময় লাইন বাই লাইন লিখুন, এবং সুন্দরভাবে ফরম্যাট করুন। বিষয়ের সাথে সম্পর্কিত প্রশ্ন জিজ্ঞাসা করুন। আন্তরিক, আকর্ষক হোন, এবং এই চ্যাটের আগের বার্তাগুলো মনে রাখুন।`;
 
                 const chat = chatHistory.find(c => c.id === currentChatId);
                 let messages = [
@@ -1331,23 +1156,62 @@
                     content: userMessage
                 });
 
-                // ✅ এখন সার্ভারে রিকোয়েস্ট পাঠানো হবে
                 const response = await fetch('/api/chat', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ messages })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messages, stream: true })
                 });
 
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Server error');
+                if (!response.ok) throw new Error('Server error');
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                let fullResponse = '';
+                const messageDiv = document.querySelector('.bot-message:last-child .message-text') || null;
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    try {
+                        const lines = chunk.split('\n');
+                        for (const line of lines) {
+                            if (line.trim() === '' || line.includes('[DONE]')) continue;
+                            const cleanLine = line.trim().replace(/^\s*/, '');
+                            if (!cleanLine) continue;
+
+                            const jsonData = JSON.parse(cleanLine);
+                            const content = jsonData.choices?.[0]?.delta?.content || '';
+
+                            if (content) {
+                                fullResponse += content;
+
+                                if (messageDiv) {
+                                    const tempDiv = document.createElement('div');
+                                    tempDiv.innerHTML = fullResponse;
+
+                                    // Syntax highlight
+                                    const codeBlocks = tempDiv.querySelectorAll('pre code');
+                                    codeBlocks.forEach(block => {
+                                        block.innerHTML = block.textContent
+                                            .replace(/</g, '<')
+                                            .replace(/>/g, '>');
+                                    });
+
+                                    messageDiv.innerHTML = tempDiv.innerHTML;
+                                    const chatMessages = document.getElementById('chatMessages');
+                                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Parsing error:", e);
+                    }
                 }
 
-                const data = await response.json();
-                return data.choices[0].message.content;
-
+                return fullResponse;
             } catch (error) {
                 console.error('API Error:', error);
                 return language === 'en'
@@ -1357,17 +1221,31 @@
         }
 
         async function sendMessage() {
+            if (isSending) return;
+            isSending = true;
+
             const userInput = document.getElementById('userInput');
             const message = userInput.value.trim();
-            
-            if (message === '') return;
-            
-            const language = detectLanguage(message);
-            
-            addMessageToChat(message, 'user');
-            userInput.value = '';
+            const mediaContent = window.tempImage;
+
+            if (message === '' && !mediaContent) {
+                isSending = false;
+                return;
+            }
+
+            // Add user message
+            if (message) {
+                addMessageToChat(message, 'user');
+                userInput.value = '';
+            }
+
+            if (mediaContent) {
+                addMessageToChat(mediaContent, 'user');
+                window.tempImage = null;
+            }
+
             showTypingIndicator();
-            
+
             try {
                 const chatMessages = document.getElementById('chatMessages');
                 const messageDiv = document.createElement('div');
@@ -1386,22 +1264,23 @@
                 chatMessages.appendChild(messageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
 
-                const botResponse = await getBotResponse(message, language);
+                const botResponse = await getBotResponse(message || 'আমি একটি ফাইল পাঠিয়েছি', detectLanguage(message));
                 hideTypingIndicator();
-                
+                isSending = false;
+
                 if (botResponse && !messageDiv.querySelector('.message-text').textContent) {
                     messageDiv.querySelector('.message-text').textContent = botResponse;
                 }
 
-                updateChatHistory(); // ✅ 2. পরিবর্তন: সার্ভারে সেভ করার জন্য
+                updateChatHistory();
             } catch (error) {
                 hideTypingIndicator();
-                const errorMessage = language === 'en'
+                isSending = false;
+                const errorMessage = detectLanguage(message) === 'en'
                     ? 'Sorry, an error occurred. Please try again later. 😔'
                     : 'দুঃখিত, একটি ত্রুটি ঘটেছে। অনুগ্রহ করে পরে আবার চেষ্টা করুন। 😔';
                 addMessageToChat(errorMessage, 'bot');
                 updateChatHistory();
-                console.error('Error:', error);
             }
         }
 
@@ -1433,7 +1312,7 @@
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
-            // Add line numbers and copy functionality to code blocks
+            // Add line numbers and copy functionality
             const codeWrappers = messageDiv.querySelectorAll('.code-wrapper');
             codeWrappers.forEach(wrapper => {
                 const lines = wrapper.querySelector('.code-content').textContent.split('\n');
@@ -1519,7 +1398,6 @@
             }, 3000);
         }
 
-        // ✅ 2. পরিবর্তন: চ্যাট সার্ভারে সেভ করার জন্য
         function updateChatHistory() {
             const chatMessages = document.getElementById('chatMessages');
             const messages = chatMessages.querySelectorAll('.message');
@@ -1528,8 +1406,7 @@
             messages.forEach(message => {
                 const isBot = message.classList.contains('bot-message');
                 const textElement = message.querySelector('.message-text');
-                const text = textElement ? textElement.innerHTML : message.querySelector('.message-content').innerHTML;
-                
+                const text = textElement ? textElement.innerHTML : '';
                 chatData.push({
                     sender: isBot ? 'bot' : 'user',
                     text: text
@@ -1553,29 +1430,6 @@
             
             if (isHistoryOpen) {
                 loadChatHistoryItems();
-            }
-
-            // ✅ সার্ভারে চ্যাট সেভ করুন
-            saveChatToServer(currentChatId, chatData);
-        }
-
-        // ✅ নতুন ফাংশন: সার্ভারে চ্যাট সেভ করুন
-        async function saveChatToServer(chatId, messages) {
-            const userId = "default-user"; // পরে লগইন সিস্টেম যোগ করুন
-            try {
-                await fetch('/api/chats', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id: chatId,
-                        userId: userId,
-                        title: messages.length > 0 ? messages[0].text.substring(0, 30) : "New Chat",
-                        messages: messages
-                    })
-                });
-                console.log("Chat saved to server");
-            } catch (error) {
-                console.error("Failed to save chat:", error);
             }
         }
 
@@ -1608,4 +1462,4 @@
         });
     </script>
 </body>
-  </html>
+    </html>
