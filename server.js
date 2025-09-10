@@ -71,7 +71,7 @@ app.get('/api/chats/:userId/:chatId', (req, res) => {
 // ✅ API: Send message to Groq (সিকিউর API কল)
 app.post('/api/chat', async (req, res) => {
     try {
-        const { messages, model = 'gemma-7b-it', stream = false } = req.body; // ← নতুন মডেল
+        const { messages, model = 'llama3-70b-8192', stream = false } = req.body; // ← নতুন মডেল
 
         const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
