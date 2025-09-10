@@ -938,9 +938,9 @@
                     <i class="fas fa-moon"></i>
                     <span id="themeText">লাইট/ডার্ক মোড</span>
                 </div>
-                <div class="settings-option" onclick="alert('ভবিষ্যতে যুক্ত হবে')">
-                    <i class="fas fa-language"></i>
-                    <span>ভাষা</span>
+                <div class="settings-option" onclick="showDeveloperInfo()">
+                    <i class="fas fa-user"></i>
+                    <span>ডেভেলপার সম্পর্কে</span>
                 </div>
             </div>
             <div class="close-media" onclick="closeSettingsModal()">বন্ধ করুন</div>
@@ -1075,7 +1075,6 @@
                 welcomeScreen.style.display = 'none';
             }
             
-            // ✅ নতুন চ্যাটে লোগো শো
             chatMessages.innerHTML = `
                 <div class="welcome-screen" style="display:flex;">
                     <div class="welcome-logo">MC</div>
@@ -1477,7 +1476,7 @@
             
             formattedMessage = formattedMessage.replace(/`([^`]+)`/g, '<code>$1</code>');
             
-            const messageContent = `<div class="message-text">${formattedMessage}</div>`;
+            const messageText = `<div class="message-text">${formattedMessage}</div>`;
             
             if (sender === 'bot') {
                 messageDiv.innerHTML = `
@@ -1486,7 +1485,7 @@
                             <i class="fas fa-robot"></i>
                             Master Chat
                         </div>
-                        ${messageContent}
+                        ${messageText}
                         <div class="message-time"></div>
                         <div class="message-actions">
                             <button class="action-btn" onclick="rateMessage(this, 'like')" aria-label="Like message"><i class="fas fa-thumbs-up"></i></button>
@@ -1498,7 +1497,7 @@
             } else {
                 messageDiv.innerHTML = `
                     <div class="message-content">
-                        ${messageContent}
+                        ${messageText}
                         <div class="message-time"></div>
                         <div class="message-actions">
                             <button class="action-btn" onclick="rateMessage(this, 'like')" aria-label="Like message"><i class="fas fa-thumbs-up"></i></button>
@@ -1618,6 +1617,17 @@
             }
         }
 
+        function showDeveloperInfo() {
+            alert(`
+Master Chat ডেভেলপার: Jonayed Al Kafi
+
+🔗 Facebook: https://www.facebook.com/share/15wcmgpwSe/
+📸 Instagram: https://www.instagram.com/jonayedalkafi?igsh=YzljYTk1ODg3Zg==
+
+আপনার প্রশ্ন বা পরামর্শ থাকলে যোগাযোগ করুন!
+            `);
+        }
+
         document.getElementById('userInput').addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 sendMessage();
@@ -1638,4 +1648,4 @@
         });
     </script>
 </body>
-                      </html>
+</html>
