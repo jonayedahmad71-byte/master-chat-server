@@ -71,7 +71,7 @@ app.get('/api/chats/:userId/:chatId', (req, res) => {
 // ✅ API: Send message to Groq (সিকিউর API কল)
 app.post('/api/chat', async (req, res) => {
     try {
-        const { messages, model = 'llama3-70b-8192', stream = false } = req.body; // ← নতুন মডেল
+        const { messages, model = 'llama3-70b-8192', stream = true } = req.body; // ← stream = true
 
         const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
@@ -82,7 +82,7 @@ app.post('/api/chat', async (req, res) => {
             body: JSON.stringify({
                 model,
                 messages,
-                max_tokens: 500,
+                max_tokens: 1024, // ← বাড়িয়ে দাও
                 temperature: 0.7,
                 stream
             })
@@ -90,6 +90,7 @@ app.post('/api/chat', async (req, res) => {
 
         if (!groqResponse.ok) {
             const errorData = await groqResponse.json();
+            console.error('Groq API Error:', errorData);
             throw new Error(errorData.error?.message || 'Groq API Error');
         }
 
