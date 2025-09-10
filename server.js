@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
@@ -22,7 +21,7 @@ db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS chats (
             id TEXT PRIMARY KEY,
-            user_id TEXT,
+            user_id TEXT DEFAULT 'anonymous',
             title TEXT,
             messages TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -74,7 +73,8 @@ app.post('/api/chat', async (req, res) => {
     try {
         const { messages, model = 'llama-3.1-8b-instant', stream = false } = req.body;
 
-        const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+        // 🔥 স্পেস-মুক্ত URL — এখানে কোনো স্পেস নেই!
+        const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -95,7 +95,6 @@ app.post('/api/chat', async (req, res) => {
         }
 
         if (stream) {
-            // Streaming response
             res.setHeader('Content-Type', 'text/event-stream');
             res.setHeader('Cache-Control', 'no-cache');
             res.setHeader('Connection', 'keep-alive');
@@ -106,13 +105,11 @@ app.post('/api/chat', async (req, res) => {
             while (true) {
                 const { value, done } = await reader.read();
                 if (done) break;
-
                 const chunk = decoder.decode(value);
                 res.write(chunk);
             }
             res.end();
         } else {
-            // Normal response
             const data = await groqResponse.json();
             res.json(data);
         }
