@@ -74,7 +74,7 @@ app.post('/api/chat', async (req, res) => {
     try {
         const { messages, model = 'llama-3.1-8b-instant', stream = false } = req.body;
 
-        const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
