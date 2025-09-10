@@ -71,9 +71,8 @@ app.get('/api/chats/:userId/:chatId', (req, res) => {
 // ✅ API: Send message to Groq (সিকিউর API কল)
 app.post('/api/chat', async (req, res) => {
     try {
-        const { messages, model = 'llama-3.1-8b-instant', stream = false } = req.body;
+        const { messages, model = 'llama-3.1-8b-preview', stream = false } = req.body; // ← মডেল পরিবর্তন করা হয়েছে
 
-        // 🔥 স্পেস-মুক্ত URL — এখানে কোনো স্পেস নেই!
         const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
             headers: {
