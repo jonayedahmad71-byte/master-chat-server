@@ -54,22 +54,18 @@ function truncateMessages(messages, maxTokens = 6000) {
     return truncated;
 }
 
-// ✅ OpenRouter - Free Models (Random)
+// ✅ OpenRouter - Free & Public Models (Random Selection)
 const OPENROUTER_FREE_MODELS = [
-    "meta-llama/llama-3-70b-instruct",
     "meta-llama/llama-3-8b-instruct",
-    "anthropic/claude-3-haiku",
-    "google/gemini-pro-1.5",
-    "mistralai/mixtral-8x7b-instruct",
+    "mistralai/mistral-7b-instruct",
+    "google/gemma-7b-it",
+    "nousresearch/hermes-2-pro-mistral-7b",
+    "openchat/openchat-7b",
+    "cognitivecomputations/dolphin-mixtral-8x7b",
     "huggingfaceh4/zephyr-7b-beta",
     "teknium/openhermes-2.5-mistral-7b",
-    "cognitivecomputations/dolphin-mixtral-8x7b",
-    "undi95/remm-slerp-l2-13b",
-    "qwen/qwen1.5-72b-chat",
-    "deepseek/deepseek-llm-67b-chat",
-    "zero-one-ai/yi-34b-chat",
-    "neversleep/llama-3-lumimaid-70b",
-    "gryphe/mythomax-l2-13b"
+    "microsoft/phi-3-mini-128k-instruct",
+    "qwen/qwen1.5-7b-chat"
 ];
 
 // ✅ OpenRouter API Call (Random Model)
@@ -78,7 +74,7 @@ async function callOpenRouterAPI(messages) {
     const truncatedMessages = truncateMessages(messages);
 
     try {
-        // 🔥 স্পেস মুছে দেওয়া হয়েছে!
+        // 🔥 স্পেস রিমুভ করা হয়েছে — এখন URL ঠিক!
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
             headers: {
