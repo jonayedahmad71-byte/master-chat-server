@@ -1300,97 +1300,83 @@
             }
         }
 
-        async function getBotResponse(userMessage, language) {
-            try {
-                const systemPrompt = language === 'en'
-                    ? `You are Master Chat, a friendly, helpful, and professional AI assistant created by Kafi AI Developer (Jonayed Al Kafi). You can answer any question, explain concepts, write code, and help with learning. Always respond in a conversational, human-like manner with appropriate emojis. When writing code, output it line by line with proper syntax highlighting. Format code blocks properly. Ask follow-up questions. Be warm, engaging, and remember previous messages in this chat.` 
-                    : `আপনি Master Chat, একজন বন্ধুত্বপূর্ণ, সহায়ক, এবং পেশাদার AI সহকারী, যার নির্মাতা Kafi AI Developer (Jonayed Al Kafi)। আপনি যেকোনো প্রশ্নের উত্তর দিতে পারেন, ধারণা ব্যাখ্যা করতে পারেন, কোড লিখতে পারেন, এবং শেখার কাজে সাহায্য করতে পারেন। সবসময় কথোপকথনের ধরনে, মানুষের মতো উত্তর দিন এবং উপযুক্ত ইমোজি ব্যবহার করুন। কোড লিখার সময় লাইন বাই লাইন লিখুন, এবং সুন্দরভাবে ফরম্যাট করুন। বিষয়ের সাথে সম্পর্কিত প্রশ্ন জিজ্ঞাসা করুন। আন্তরিক, আকর্ষক হোন, এবং এই চ্যাটের আগের বার্তাগুলো মনে রাখুন।`;
+async function getBotResponse(userMessage, language) {
+    try {
+        const systemPrompt = language === 'en'
+            ? `You are Master Chat, a friendly, helpful, and professional AI assistant created by Kafi AI Developer (Jonayed Al Kafi). You can answer any question, explain concepts, write code, and help with learning. Always respond in a conversational, human-like manner with appropriate emojis. When writing code, output it line by line with proper syntax highlighting. Format code blocks properly. Ask follow-up questions. Be warm, engaging, and remember previous messages in this chat.` 
+            : `আপনি Master Chat, একজন বন্ধুত্বপূর্ণ, সহায়ক, এবং পেশাদার AI সহকারী, যার নির্মাতা Kafi AI Developer (Jonayed Al Kafi)। আপনি যেকোনো প্রশ্নের উত্তর দিতে পারেন, ধারণা ব্যাখ্যা করতে পারেন, কোড লিখতে পারেন, এবং শেখার কাজে সাহায় করতে পারেন। সবসময় কথোপকথনের ধরনে, মানুষের মতো উত্তর দিন এবং উপযুক্ত ইমোজি ব্যবহার করুন। কোড লিখার সময় লাইন বাই লাইন লিখুন, এবং সুন্দরভাবে ফরম্যাট করুন। বিষয়ের সাথে সম্পর্কিত প্রশ্ন জিজ্ঞাসা করুন। আন্তরিক, আকর্ষক হোন, এবং এই চ্যাটের আগের বার্তাগুলো মনে রাখুন।`;
 
-                const chat = chatHistory.find(c => c.id === currentChatId);
-                let messages = [
-                    {
-                        role: 'system',
-                        content: systemPrompt
-                    }
-                ];
+        const chat = chatHistory.find(c => c.id === currentChatId);
+        let messages = [
+            { role: 'system', content: systemPrompt }
+        ];
 
-                if (chat && chat.messages) {
-                    chat.messages.forEach(msg => {
-                        messages.push({
-                            role: msg.sender === 'user' ? 'user' : 'assistant',
-                            content: msg.text
-                        });
-                    });
-                }
-
+        if (chat && chat.messages) {
+            chat.messages.forEach(msg => {
                 messages.push({
-                    role: 'user',
-                    content: userMessage
+                    role: msg.sender === 'user' ? 'user' : 'assistant',
+                    content: msg.text
                 });
+            });
+        }
 
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messages, stream: true })
-                });
+        messages.push({ role: 'user', content: userMessage });
 
-                if (!response.ok) throw new Error('Server error');
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ messages, stream: true })
+        });
 
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-                let fullResponse = '';
-                const messageDiv = document.querySelector('.bot-message:last-child .message-text') || null;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let fullResponse = '';
 
-                while (true) {
-                    const { value, done } = await reader.read();
-                    if (done) break;
+        // DOM element for streaming
+        const messageDiv = document.querySelector('.bot-message:last-child .message-text');
+        if (!messageDiv) return "";
 
-                    const chunk = decoder.decode(value);
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split('\n').filter(line => line.trim() !== '');
+
+            for (const line of lines) {
+                if (line.includes('[DONE]')) continue;
+                if (line.startsWith('data: ')) {
+                    const jsonString = line.slice(6).trim(); // Remove "data: "
+                    if (jsonString === '[DONE]') continue;
+
                     try {
-                        const lines = chunk.split('\n');
-                        for (const line of lines) {
-                            if (line.trim() === '' || line.includes('[DONE]')) continue;
-                            const cleanLine = line.trim().replace(/^\s*/, '');
-                            if (!cleanLine) continue;
-
-                            const jsonData = JSON.parse(cleanLine);
-                            const content = jsonData.choices?.[0]?.delta?.content || '';
-
-                            if (content) {
-                                fullResponse += content;
-
-                                if (messageDiv) {
-                                    const tempDiv = document.createElement('div');
-                                    tempDiv.innerHTML = fullResponse;
-
-                                    // Syntax highlight
-                                    const codeBlocks = tempDiv.querySelectorAll('pre code');
-                                    codeBlocks.forEach(block => {
-                                        block.innerHTML = block.textContent
-                                            .replace(/</g, '<')
-                                            .replace(/>/g, '>');
-                                    });
-
-                                    messageDiv.innerHTML = tempDiv.innerHTML;
-                                    const chatMessages = document.getElementById('chatMessages');
-                                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                                }
-                            }
+                        const data = JSON.parse(jsonString);
+                        const content = data.choices?.[0]?.delta?.content || '';
+                        if (content) {
+                            fullResponse += content;
+                            messageDiv.textContent = fullResponse; // Use textContent to prevent XSS
+                            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
                         }
                     } catch (e) {
-                        console.error("Parsing error:", e);
+                        console.warn("Failed to parse JSON:", e, jsonString);
+                        continue;
                     }
                 }
-
-                return fullResponse;
-            } catch (error) {
-                console.error('API Error:', error);
-                return language === 'en'
-                    ? "Sorry, I couldn't process your message right now. Please try again later. 🙏"
-                    : "দুঃখিত, আমি এখন আপনার বার্তা প্রক্রিয়া করতে পারিনি। অনুগ্রহ করে পরে আবার চেষ্টা করুন। 🙏";
             }
         }
+
+        return fullResponse || "AI থেকে কোনো উত্তর পাওয়া যায়নি।";
+    } catch (error) {
+        console.error('API Error:', error);
+        return language === 'en'
+            ? "Sorry, I couldn't process your message right now. Please try again later. 🙏"
+            : "দুঃখিত, আমি এখন আপনার বার্তা প্রক্রিয়া করতে পারিনি। অনুগ্রহ করে পরে আবার চেষ্টা করুন। 🙏";
+    }
+}
 
         async function sendMessage() {
             if (isSending) return;
