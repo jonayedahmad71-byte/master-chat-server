@@ -78,6 +78,7 @@ async function callOpenRouterAPI(messages) {
     const truncatedMessages = truncateMessages(messages);
 
     try {
+        // 🔥 স্পেস মুছে দেওয়া হয়েছে!
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
             headers: {
