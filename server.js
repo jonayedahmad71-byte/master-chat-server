@@ -5,18 +5,25 @@ const bodyParser = require('body-parser');
 const path = require('path');
 require('dotenv').config();
 
+// ✅ Node.js fetch fallback (for Node < 18)
+let fetchFn;
+try {
+    fetchFn = fetch;
+} catch {
+    fetchFn = require("node-fetch");
+}
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// -------------------- Middleware --------------------
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// SQLite Database
-const db = new sqlite3.Database('./chat-history.db');
+// -------------------- SQLite Database --------------------
+const db = new sqlite3.Database(path.join(__dirname, 'chat-history.db'));
 
-// Create table if not exists
 db.serialize(() => {
     db.run(`
         CREATE TABLE IF NOT EXISTS chats (
@@ -29,32 +36,28 @@ db.serialize(() => {
     `);
 });
 
-// ✅ Token estimation
+// -------------------- Token Handling --------------------
 function estimateTokenCount(text) {
-    return Math.ceil(text.length / 4);
+    return Math.ceil((text || "").length / 4);
 }
 
-// ✅ Truncate messages to fit token limit
 function truncateMessages(messages, maxTokens = 6000) {
     let totalTokens = 0;
     const truncated = [];
 
     for (let i = messages.length - 1; i >= 0; i--) {
         const msg = messages[i];
-        const tokenCount = estimateTokenCount(msg.content || msg.text);
+        const tokenCount = estimateTokenCount(msg?.content || msg?.text || "");
 
-        if (totalTokens + tokenCount > maxTokens) {
-            break;
-        }
+        if (totalTokens + tokenCount > maxTokens) break;
 
         truncated.unshift(msg);
         totalTokens += tokenCount;
     }
-
     return truncated;
 }
 
-// ✅ OpenRouter - Free & Public Models (Random Selection)
+// -------------------- OpenRouter Setup --------------------
 const OPENROUTER_FREE_MODELS = [
     "meta-llama/llama-3-8b-instruct",
     "mistralai/mistral-7b-instruct",
@@ -68,14 +71,12 @@ const OPENROUTER_FREE_MODELS = [
     "qwen/qwen1.5-7b-chat"
 ];
 
-// ✅ OpenRouter API Call (Random Model)
 async function callOpenRouterAPI(messages) {
     const model = OPENROUTER_FREE_MODELS[Math.floor(Math.random() * OPENROUTER_FREE_MODELS.length)];
     const truncatedMessages = truncateMessages(messages);
 
     try {
-        // 🔥 স্পেস রিমুভ করা হয়েছে — এখন URL ঠিক!
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        const response = await fetchFn('https://openrouter.ai/api/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -92,30 +93,35 @@ async function callOpenRouterAPI(messages) {
         });
 
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`Model ${model} failed: ${errorData.error?.message}`);
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(`Model ${model} failed: ${errorData.error?.message || response.statusText}`);
         }
 
         const data = await response.json();
-        console.log(`✅ ${model} responded successfully!`);
-        return data.choices[0].message.content;
+        console.log("🔎 OpenRouter Full Response:", JSON.stringify(data, null, 2));
+
+        return data.choices?.[0]?.message?.content || "⚠️ মডেল থেকে কোন উত্তর পাওয়া যায়নি";
     } catch (error) {
-        console.warn(`⚠️ ${model} failed:`, error.message);
+        console.error(`⚠️ OpenRouter Error (${model}):`, error.message);
         throw error;
     }
 }
 
-// ✅ Weather API - Bangladesh
+// -------------------- Weather API --------------------
 async function getWeatherInBangladesh(city = 'Dhaka') {
-    const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API_KEY}&q=${city},Bangladesh`);
+    if (!process.env.WEATHER_API_KEY) {
+        throw new Error("Missing WEATHER_API_KEY in .env");
+    }
+
+    const response = await fetchFn(`https://api.weatherapi.com/v1/current.json?key=${process.env.WEATHER_API_KEY}&q=${city},Bangladesh`);
     if (!response.ok) throw new Error('Weather API failed');
+
     const data = await response.json();
     return `📍 ${data.location.name}, ${data.location.country}\n🌡️ তাপমাত্রা: ${data.current.temp_c}°C\n☁️ ${data.current.condition.text}\n💧 আর্দ্রতা: ${data.current.humidity}%\n💨 বাতাস: ${data.current.wind_kph} km/h`;
 }
 
-// ✅ Detect weather command
 function detectWeatherCommand(text) {
-    const lower = text.toLowerCase().trim();
+    const lower = (text || "").toLowerCase().trim();
     if (lower.includes('আবহাওয়া') || lower.includes('weather')) {
         let city = 'Dhaka';
         if (lower.includes('চট্টগ্রাম')) city = 'Chittagong';
@@ -127,7 +133,7 @@ function detectWeatherCommand(text) {
     return null;
 }
 
-// ✅ Main /api/chat endpoint
+// -------------------- Chat API Endpoint --------------------
 app.post('/api/chat', async (req, res) => {
     try {
         const { messages } = req.body;
@@ -136,9 +142,8 @@ app.post('/api/chat', async (req, res) => {
         }
 
         const lastMessage = messages[messages.length - 1];
-        const userText = lastMessage.content || lastMessage.text;
+        const userText = lastMessage?.content || lastMessage?.text || "";
 
-        // Check for weather command
         const weatherCmd = detectWeatherCommand(userText);
 
         let botResponse = '';
@@ -146,9 +151,10 @@ app.post('/api/chat', async (req, res) => {
         if (weatherCmd) {
             botResponse = await getWeatherInBangladesh(weatherCmd.city);
         } else {
-            // Use OpenRouter AI
             botResponse = await callOpenRouterAPI(messages);
         }
+
+        console.log("BOT:", botResponse);
 
         res.json({ content: botResponse });
     } catch (error) {
@@ -159,11 +165,12 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-// ✅ Serve frontend
+// -------------------- Serve Frontend --------------------
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// -------------------- Start Server --------------------
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
 });
