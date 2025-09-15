@@ -2,22 +2,12 @@
   "services": [
     {
       "type": "web",
-      "name": "master-chat-ai",
+      "name": "master-chat-server",
       "env": "node",
       "region": "oregon",
       "plan": "free",
       "buildCommand": "npm install",
-      "startCommand": "npm start",
-      "envVars": {
-        "PORT": "10000",
-        "NODE_ENV": "production",
-        "AI_PROVIDER": "groq",
-        "GROQ_API_KEY": "",
-        "OPENAI_API_KEY": "",
-        "MISTRAL_API_KEY": "",
-        "OLLAMA_URL": "",
-        "OLLAMA_MODEL": "llama3"
-      }
+      "startCommand": "npm start"
     }
   ]
 }
